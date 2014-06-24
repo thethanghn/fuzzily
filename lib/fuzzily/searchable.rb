@@ -128,17 +128,17 @@ module Fuzzily
         end
 
         define_method _o.update_trigrams_method do
-
-          _update_fuzzy!(_o)
+          if _o.async && self.respond_to?(:delay)
+            self.delay._update_fuzzy!(_o)
+          else
+            _update_fuzzy!(_o)
+          end
         end
 
         after_save do |record|
           next unless record.send("#{field}_changed?".to_sym)
-          if _o.async && record.respond_to?(:delay)
-            record.delay.send(_o.update_trigrams_method)
-          else
-            record.send(_o.update_trigrams_method)
-          end
+          
+          record.send(_o.update_trigrams_method)
         end
 
         class_variable_set(:"@@fuzzily_searchable_#{field}", true)
