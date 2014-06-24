@@ -10,8 +10,6 @@ module Fuzzily
       when 3 then by.extend Rails3ClassMethods
       when 4 then by.extend Rails4ClassMethods
       end
-
-      attr_accessor :async
     end
 
     private
@@ -128,7 +126,12 @@ module Fuzzily
         end
 
         define_method _o.update_trigrams_method do
-          _update_fuzzy!(_o)
+          async = options.fetch(:async, false)
+          if async && self.respond_to?(:delay)
+            self.delay._update_fuzzy!(_o)
+          else
+            _update_fuzzy!(_o)
+          end
         end
 
         after_save do |record|
