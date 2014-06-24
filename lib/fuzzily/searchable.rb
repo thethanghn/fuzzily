@@ -37,6 +37,8 @@ module Fuzzily
         fields.each do |field|
           make_field_fuzzily_searchable(field, options)
         end
+
+        self.async = options.fetch(:async, false)
       end
 
       private
