@@ -36,7 +36,6 @@ module Fuzzily
           make_field_fuzzily_searchable(field, options)
         end
 
-        self.async = options.fetch(:async, false)
       end
 
       private
@@ -114,7 +113,8 @@ module Fuzzily
           :field                  => field,
           :trigram_class_name     => options.fetch(:class_name, 'Trigram'),
           :trigram_association    => "trigrams_for_#{field}".to_sym,
-          :update_trigrams_method => "update_fuzzy_#{field}!".to_sym
+          :update_trigrams_method => "update_fuzzy_#{field}!".to_sym,
+          :async                  => options.fetch(:async, false)
         )
 
         _add_trigram_association(_o)
@@ -134,7 +134,7 @@ module Fuzzily
 
         after_save do |record|
           next unless record.send("#{field}_changed?".to_sym)
-          if record.async && record.respond_to?(:delay)
+          if _o.async && record.respond_to?(:delay)
             record.delay.send(_o.update_trigrams_method)
           else
             record.send(_o.update_trigrams_method)
