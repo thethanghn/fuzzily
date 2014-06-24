@@ -134,9 +134,11 @@ module Fuzzily
 
         after_save do |record|
           next unless record.send("#{field}_changed?".to_sym)
-          puts "before running fuzzily"
-          record.send("delay.#{_o.update_trigrams_method}")
-          puts "after running fuzzily"
+          if record.async && record.respond_to?(:delay)
+            record.delay.send(_o.update_trigrams_method)
+          else
+            record.send(_o.update_trigrams_method)
+          end
         end
 
         class_variable_set(:"@@fuzzily_searchable_#{field}", true)
