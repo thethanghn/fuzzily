@@ -10,6 +10,8 @@ module Fuzzily
       when 3 then by.extend Rails3ClassMethods
       when 4 then by.extend Rails4ClassMethods
       end
+
+      attr_accessor :async
     end
 
     private
@@ -126,17 +128,15 @@ module Fuzzily
         end
 
         define_method _o.update_trigrams_method do
-          async = options.fetch(:async, false)
-          if async && self.respond_to?(:delay)
-            self.delay._update_fuzzy!(_o)
-          else
-            _update_fuzzy!(_o)
-          end
+
+          _update_fuzzy!(_o)
         end
 
         after_save do |record|
           next unless record.send("#{field}_changed?".to_sym)
-          record.send(_o.update_trigrams_method)
+          puts "before running fuzzily"
+          record.send("delay.#{_o.update_trigrams_method}")
+          puts "after running fuzzily"
         end
 
         class_variable_set(:"@@fuzzily_searchable_#{field}", true)
