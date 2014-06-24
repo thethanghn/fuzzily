@@ -17,6 +17,8 @@ module Fuzzily
         validates_presence_of     :score
         validates_presence_of     :fuzzy_field
 
+        attr_accessor :async
+
         _add_fuzzy_scopes
         class_variable_set(:@@fuzzily_trigram_model, true)
       end

@@ -10,8 +10,6 @@ module Fuzzily
       when 3 then by.extend Rails3ClassMethods
       when 4 then by.extend Rails4ClassMethods
       end
-
-      attr_accessor :async
     end
 
     private
