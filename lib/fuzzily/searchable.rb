@@ -128,7 +128,7 @@ module Fuzzily
         end
 
         define_method _o.update_trigrams_method do
-          if _o.async && self.respond_to?(:delay)
+          if !Rails.env.test? && _o.async && self.respond_to?(:delay)
             self.delay._update_fuzzy!(_o)
           else
             _update_fuzzy!(_o)
