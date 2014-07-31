@@ -127,7 +127,7 @@ module Fuzzily
         end
 
         define_method _o.update_trigrams_method do
-          if ENV['RUN_TRIGRAM_IMMEDIATELY'].present? && _o.async && self.respond_to?(:delay)
+          if ENV['RUN_TRIGRAM_IMMEDIATELY'].blank? && _o.async && self.respond_to?(:delay)
             self.delay._update_fuzzy!(_o)
           else
             _update_fuzzy!(_o)
